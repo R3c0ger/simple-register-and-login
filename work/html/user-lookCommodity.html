@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>我的订单</title>
+
+	<!-- 引入 Bootstrap 样式和 jQuery 库 -->
+	<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/homt.css">
+	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	
+	<!-- 引入自定义样式 -->
+	<style>
+		/* 页面结构样式 */
+		.container {
+			max-width: 960px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+		.order-list {
+			margin-top: 20px;
+		}
+		.order-item {
+			padding: 10px;
+			margin-bottom: 10px;
+			background-color: #f9f9f9;
+			border-radius: 5px;
+		}
+		.order-item:hover {
+			box-shadow: 0 0 5px rgba(0,0,0,.2);
+			cursor: pointer;
+		}
+		.order-item .order-info {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.order-item .order-info .order-status {
+			font-size: 14px;
+		}
+		.order-item.active .order-info {
+			background-color: #e9ecef;
+			border-radius: 5px 5px 0 0;
+		}
+		.order-detail {
+			margin-top: 5px;
+			padding: 10px;
+			background-color: #f5f5f5;
+			border-radius: 0 0 5px 5px;
+			display: none;
+		}
+		.order-detail .form-group {
+			margin-top: 5px;
+		}
+		/* 按钮样式 */
+		.btn-secondary {
+			background-color: #6c757d;
+			color: #fff;
+		}
+		.btn-secondary:hover {
+			background-color: #5a6268;
+			color: #fff;
+		}
+		.btn-danger {
+			background-color: #dc3545;
+			color: #fff;
+		}
+		.btn-danger:hover {
+			background-color: #c82333;
+			color: #fff;
+		}
+		/* 动画样式 */
+		.fade-in {
+			animation: fadeIn .5s;
+			-webkit-animation-fill-mode: forwards;
+			animation-fill-mode: forwards;
+		}
+		.fade-out {
+			animation: fadeOut .5s;
+			-webkit-animation-fill-mode: forwards;
+			animation-fill-mode: forwards;
+		}
+		@keyframes fadeIn {
+			0% { opacity: 0; }
+			100% { opacity: 1; }
+		}
+		@keyframes fadeOut {
+			0% { opacity: 1; }
+			100% { opacity: 0; }
+		}
+	</style>
+</head>
+<body>
+	<!-- 头部 -->
+  <script src="../js/nav-user.js"></script>
+	<header class="bg-light py-3">
+		<div class="container">
+      <h1 style="text-align: center; margin-top: 40px; margin-bottom: 20px;">商品订单查看</h1>
+		</div>
+	</header>
+
+	<!-- 订单列表 -->
+	<div class="container order-list">
+		<div class="order-item">
+			<div class="order-info">
+				<h5 class="mb-0">订单号：#10001</h5>
+				<span class="order-status">已付款</span>
+			</div>
+			<div class="order-detail"></div>
+		</div>
+		<div class="order-item">
+			<div class="order-info">
+				<h5 class="mb-0">订单号：#10002</h5>
+				<span class="order-status">未付款</span>
+			</div>
+			<div class="order-detail"></div>
+		</div>
+		<div class="order-item">
+			<div class="order-info">
+				<h5 class="mb-0">订单号：#10003</h5>
+				<span class="order-status">已发货</span>
+			</div>
+			<div class="order-detail"></div>
+		</div>
+	</div>
+
+	<!-- 底部 -->
+	<footer class="bg-light py-3">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-6">
+					<p class="mb-0">&copy; 2020 ACME, Inc.</p>
+				</div>
+				<div class="col-sm-6 text-right">
+					<button class="btn btn-secondary">刷新</button>
+					<button class="btn btn-danger">删除</button>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<!-- 引入 Bootstrap JavaScript 插件 -->
+	<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<!-- 自定义 JavaScript 代码 -->
+	<script>
+		$(function() {
+			// 点击订单列表项时切换选中状态和显示订单详情
+			$('.order-item').on('click', function() {
+				// 切换选中状态
+				$(this).toggleClass('active').siblings().removeClass('active');
+				// 切换显示订单详情
+				var detail = $(this).find('.order-detail');
+				if (detail.css('display') == 'none') {
+					detail.html('<form>\
+						<div class="form-group row">\
+							<label class="col-sm-3 col-form-label">商品名称：</label>\
+							<div class="col-sm-9">\
+								<input type="text" class="form-control" value="电视机">\
+							</div>\
+						</div>\
+						<div class="form-group row">\
+							<label class="col-sm-3 col-form-label">商品价格：</label>\
+							<div class="col-sm-9">\
+								<input type="text" class="form-control" value="3999.00 元">\
+							</div>\
+						</div>\
+						<div class="form-group row">\
+							<label class="col-sm-3 col-form-label">商品数量：</label>\
+							<div class="col-sm-9">\
+								<input type="text" class="form-control" value="1">\
+							</div>\
+						</div>\
+						<div class="form-group row">\
+							<label class="col-sm-3 col-form-label">订单备注：</label>\
+							<div class="col-sm-9">\
+								<textarea class="form-control">请尽快发货</textarea>\
+							</div>\
+						</div>\
+						<div class="form-group row">\
+							\
+						</div>\
+					</form>').slideDown().addClass('fade-in').removeClass('fade-out');
+				} else {
+					detail.slideUp().addClass('fade-out').removeClass('fade-in');
+				}
+			});
+
+			// 点击删除按钮时删除选中订单
+			$('.btn-danger').on('click', function() {
+				var activeItem = $('.order-item.active');
+				if (activeItem.length) {
+					activeItem.fadeOut();
+				} else {
+					alert('请先选择要删除的订单');
+				}
+			});
+		});
+	</script>
+</body>
+</html>

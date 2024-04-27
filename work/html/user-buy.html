@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>商品查看页面</title>
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/homt.css">
+  <style>
+    .card {
+      margin-bottom: 30px;
+    }
+
+    .card-img-top {
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .buy-btn {
+      width: 100%;
+    }
+
+    .modal-body p {
+      margin-bottom: 5px;
+    }
+
+    .modal-body p span {
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="../js/nav-user.js"></script>
+  <h1 style="text-align: center; margin-top: 40px; margin-bottom: 20px;">商品查看页面</h1>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card">
+          <img class="card-img-top" src="https://dummyimage.com/300x200/9b59b6/fff.png" alt="Card image cap">
+          <div class="card-body">
+            <h4 class="card-title">商品1</h4>
+            <p class="card-text">这是一件商品1的详细介绍。</p>
+            <p class="card-text">价格：200元</p>
+            <button class="btn btn-primary buy-btn" data-toggle="modal" data-target="#buyModal" data-name="商品1"
+              data-price="200">使用积分购买</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <img class="card-img-top" src="https://dummyimage.com/300x200/3498db/fff.png" alt="Card image cap">
+          <div class="card-body">
+            <h4 class="card-title">商品2</h4>
+            <p class="card-text">这是一件商品2的详细介绍。</p>
+            <p class="card-text">价格：300元</p>
+            <button class="btn btn-primary buy-btn" data-toggle="modal" data-target="#buyModal" data-name="商品2"
+              data-price="300">使用积分购买</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <img class="card-img-top" src="https://dummyimage.com/300x200/2ecc71/fff.png" alt="Card image cap">
+          <div class="card-body">
+            <h4 class="card-title">商品3</h4>
+            <p class="card-text">这是一件商品3的详细介绍。</p>
+            <p class="card-text">价格：400元</p>
+            <button class="btn btn-primary buy-btn" data-toggle="modal" data-target="#buyModal" data-name="商品3"
+              data-price="400">使用积分购买</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 积分购买确认弹窗 -->
+  <div class="modal fade" id="buyModal" tabindex="-1" role="dialog" aria-labelledby="buyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="buyModalLabel">确认购买</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>您是否确认要使用<span id="buy-name"></span>积分购买此商品？</p>
+          <p>商品价格：<span id="buy-price"></span>积分</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary confirm-buy-btn">确认购买</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script>
+    $(function() {
+    // 保存当前选择的商品信息
+    var selectedName = '';
+    var selectedPrice = '';
+
+    // 点击“使用积分购买”按钮时，弹出确认购买弹窗
+    $('.buy-btn').click(function() {
+        selectedName = $(this).data('name');  // 获取所选商品名称
+        selectedPrice = $(this).data('price');  // 获取所选商品价格
+
+        // 将商品名称和价格填入确认购买弹窗中
+        $('#buy-name').text(selectedName);
+        $('#buy-price').text(selectedPrice);
+
+        $('#buyModal').modal('show');  // 弹出确认购买弹窗
+    });
+
+    // 点击确认购买按钮时，将积分扣除相应的价格并提示购买成功
+    $('.confirm-buy-btn').click(function() {
+        // TODO: 调用API，使账户积分减少selectedPrice
+        alert('购买成功！');  // TODO: 购买成功后的处理
+        $('#buyModal').modal('hide');  // 隐藏确认购买弹窗
+    });
+});
+
+  </script>
+</body>
+
+</html>

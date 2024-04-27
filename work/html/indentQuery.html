@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <meta charset="UTF-8">
+  <title>订单管理</title>
+  <link rel="stylesheet" href="../css/homt.css">
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .btn {
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn-danger {
+      background-color: #f44336;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    label{
+        display: inline-block;
+        width: 100px;
+        text-align: right;
+    }
+
+    td,th{
+        width: 100px;
+        text-align: center;
+    }
+  </style>
+</head>
+
+<body style="text-align: center;">
+
+	<script src="../js//nav.js"></script>
+
+<h1 style="margin-top: 40px; margin-bottom: 30px;">订单管理</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>订单号</th>
+        <th>客户姓名</th>
+        <th>联系电话</th>
+        <th>商品</th>
+        <th>数量</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody id="orders">
+      <!-- 初始订单数据包括在这里 -->
+    </tbody>
+  </table>
+
+  <div id="deleteOrderModal" class="modal">
+    <div class="modal-content" style="width: 500px;">
+      <span class="close" onclick="closeDeleteModal()">&times;</span>
+      <p>确认删除此订单吗？</p>
+      <button class="btn btn-danger" onclick="deleteOrder()">删除</button>
+    </div>
+  </div>
+
+  <div id="addOrderModal" class="modal">
+    <div class="modal-content" style="width: 500px;">
+      <span class="close" onclick="closeOrderModal()">&times;</span>
+      <form>
+        <label for="orderNumber">订单号:</label>
+        <input type="text" id="orderNumber" name="orderNumber"><br><br>
+        <label for="customerName">客户姓名:</label>
+        <input type="text" id="customerName" name="customerName"><br><br>
+        <label for="phoneNumber">联系电话:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber"><br><br>
+        <label for="product">商品:</label>
+        <input type="text" id="product" name="product"><br><br>
+        <label for="quantity">数量:</label>
+        <input type="text" id="quantity" name="quantity"><br><br>
+        <button class="btn" type="button" onclick="addOrder()">添加订单</button>
+      </form>
+    </div>
+  </div>
+
+  <p>点击<a href="javascript:void(0)" onclick="openOrderModal()">添加订单</a></p>
+
+  <script>
+    // 初始订单数据
+    var orders = [{
+        "orderNumber": "202101010001",
+        "customerName": "张三",
+        "phoneNumber": "13811112222",
+        "product": "手机",
+        "quantity": 2
+      },
+      {
+        "orderNumber": "202101010002",
+        "customerName": "李四",
+        "phoneNumber": "13911113333",
+        "product": "电脑",
+        "quantity": 1
+      }
+    ];
+
+    // 添加订单，将数据添加进 orders 数组并渲染到表格中
+    function addOrder() {
+      var orderNumber = document.getElementById("orderNumber").value.trim();
+      var customerName = document.getElementById("customerName").value.trim();
+      var phoneNumber = document.getElementById("phoneNumber").value.trim();
+      var product = document.getElementById("product").value.trim();
+      var quantity = document.getElementById("quantity").value.trim();
+
+      if (orderNumber === "" || customerName === "" || phoneNumber === "" || product === "" || quantity === "") {
+        alert("请输入完整订单信息");
+        return;
+      }
+
+      var order = {
+        "orderNumber": orderNumber,
+        "customerName": customerName,
+        "phoneNumber": phoneNumber,
+        "product": product,
+        "quantity": quantity
+      };
+
+      orders.push(order);
+      renderOrders(orders);
+      closeOrderModal();
+    }
+
+    // 打开添加订单弹窗
+    function openOrderModal() {
+      document.getElementById("addOrderModal").style.display = "block";
+    }
+
+    // 关闭添加订单弹窗
+    function closeOrderModal() {
+      document.getElementById("addOrderModal").style.display = "none";
+      document.getElementById("orderNumber").value = "";
+      document.getElementById("customerName").value = "";
+      document.getElementById("phoneNumber").value = "";
+      document.getElementById("product").value = "";
+      document.getElementById("quantity").value = "";
+    }
+
+    // 删除订单，从 orders 数组中删除并渲染到表格中
+    function deleteOrder() {
+      var rowToDelete = document.getElementById("deleteOrderModal").rowToDelete;
+      orders.splice(rowToDelete, 1);
+      renderOrders(orders);
+      closeDeleteModal();
+    }
+
+    // 打开删除订单弹窗
+    function openDeleteModal(rowToDelete) {
+      document.getElementById("deleteOrderModal").style.display = "block";
+      document.getElementById("deleteOrderModal").rowToDelete = rowToDelete;
+    }
+
+    // 关闭删除订单弹窗
+    function closeDeleteModal() {
+      document.getElementById("deleteOrderModal").style.display = "none";
+      document.getElementById("deleteOrderModal").rowToDelete = null;
+    }
+
+    // 渲染订单数据到表格中
+    function renderOrders(orders) {
+      var ordersTable = document.getElementById("orders");
+      ordersTable.innerHTML = "";
+
+      for (var i = 0; i < orders.length; i++) {
+        var order = orders[i];
+
+        var row = document.createElement("tr");
+
+        var orderNumberCell = document.createElement("td");
+        var customerNameCell = document.createElement("td");
+        var phoneNumberCell = document.createElement("td");
+        var productCell = document.createElement("td");
+        var quantityCell = document.createElement("td");
+        var operationCell = document.createElement("td");
+
+        orderNumberCell.innerHTML = order.orderNumber;
+        customerNameCell.innerHTML = order.customerName;
+        phoneNumberCell.innerHTML = order.phoneNumber;
+        productCell.innerHTML = order.product;
+        quantityCell.innerHTML = order.quantity;
+
+        var deleteBtn = document.createElement("button");
+        deleteBtn.innerHTML = "删除";
+        deleteBtn.classList.add("btn");
+        deleteBtn.classList.add("btn-danger");
+        deleteBtn.onclick = function (index) {
+          return function () {
+            openDeleteModal(index);
+          }
+        }(i);
+
+        operationCell.appendChild(deleteBtn);
+
+        row.appendChild(orderNumberCell);
+        row.appendChild(customerNameCell);
+        row.appendChild(phoneNumberCell);
+        row.appendChild(productCell);
+        row.appendChild(quantityCell);
+        row.appendChild(operationCell);
+
+        ordersTable.appendChild(row);
+      }
+    }
+
+    // 初始化渲染订单数据
+    renderOrders(orders);
+  </script>
+</body>
+
+</html>

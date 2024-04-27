@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>志愿活动报名情况</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/homt.css">
+    <style>
+        th{
+            text-align: center;
+        }
+        td{
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="../js/nav.js"></script>
+    <div class="container">
+        <h1 class="text-center" style="margin-top: 40px;" >志愿活动报名情况</h1>
+        <table class="table table-bordered table-hover" style="margin-top: 20px;">
+            <thead>
+                <tr class="active">
+                    <th>志愿者名称</th>
+                    <th>活动名称</th>
+                    <th>进展情况</th>
+                    <th>确认完成</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>敬老院志愿服务</td>
+                    <td>xxx</td>
+                    <td>xxx</td>
+                    <td>
+                        <button type="button" class="btn btn-danger">确认完成</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>儿童福利院陪玩</td>
+                    <td>xxx</td>
+                    <td>xxx</td>
+                    <td>
+                        <button type="button" class="btn btn-danger">确认完成</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-primary col-sm-2" data-toggle="modal" data-target="#myModal">添加新活动</button>
+    </div>
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="margin-top: 20px;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myModalLabel">新增志愿活动</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="activity-name" class="control-label">活动名称:</label>
+                            <input type="text" class="form-control" id="activity-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="activity-date" class="control-label">活动日期:</label>
+                            <input type="date" class="form-control" id="activity-date">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="add-activity-btn">保存</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script>
+        // 添加新活动
+        $('#add-activity-btn').on('click', function () {
+            var activityName = $('#activity-name').val();
+            var activityDate = $('#activity-date').val();
+            if (activityName !== '' && activityDate !== '') {
+                var newRow = '<tr>' +
+                    '<td>' + activityName + '</td>' +
+                    '<td>' + activityDate + '</td>' +
+                    '<td>0</td>' +
+                    '<td><button type="button" class="btn btn-danger">确认完成</button></td>' +
+                    '</tr>';
+                $('tbody').append(newRow);
+                $('#myModal').modal('hide');
+            } else {
+                alert('请填写完整！');
+            }
+        });
+
+        // 确认完成
+        $('table').on('click', 'button', function () {
+            if ($(this).text() === '确认完成') {
+                var num = parseInt($(this).parent().prev().text()) + 1;
+                $(this).parent().prev().text(num);
+                $(this).parent().html('<button type="button" class="btn btn-success">已完成</button>');
+            } else {
+                $(this).parent().parent().remove();
+            }
+        });
+    </script>
+</body>
+
+</html>

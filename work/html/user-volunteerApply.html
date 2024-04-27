@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>志愿活动报名</title>
+  <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/homt.css">
+  <style>
+    img {
+      width: 350px;
+      height: 200px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+  <script src="../js/nav-user.js"></script>
+  <h1 style="text-align: center; margin-top: 40px; margin-bottom: 20px;">志愿活动报名</h1>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card">
+          <img src="../resource/volunteer.png" class="card-img-top">
+          <div class="card-body">
+            <h5 class="card-title">志愿者招募活动1</h5>
+            <p class="card-text">活动介绍：xxx</p>
+            <button class="btn btn-primary btn-lg btn-block" data-toggle="modal"
+              data-target="#signupModal">选择活动</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <img src="../resource/volunteer.png" class="card-img-top">
+          <div class="card-body">
+            <h5 class="card-title">志愿者招募活动2</h5>
+            <p class="card-text">活动介绍：xxx</p>
+            <button class="btn btn-primary btn-lg btn-block" data-toggle="modal"
+              data-target="#signupModal">选择活动</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <img src="../resource/volunteer.png" class="card-img-top">
+          <div class="card-body">
+            <h5 class="card-title">志愿者招募活动3</h5>
+            <p class="card-text">活动介绍：xxx</p>
+            <button class="btn btn-primary btn-lg btn-block" data-toggle="modal"
+              data-target="#signupModal">选择活动</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="signupModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="signupModalLabel">报名志愿活动</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="name">活动名称</label>
+                <input type="text" class="form-control" id="name2" placeholder="请输入姓名">
+              </div>
+              <div class="form-group">
+                <label for="name">姓名</label>
+                <input type="text" class="form-control" id="name" placeholder="请输入姓名">
+              </div>
+              <div class="form-group">
+                <label for="tel">电话号码</label>
+                <input type="tel" class="form-control" id="tel" placeholder="请输入电话号码">
+              </div>
+              <div class="form-group">
+                <label for="email">电子邮箱</label>
+                <input type="email" class="form-control" id="email" placeholder="请输入电子邮箱">
+              </div>
+              <button type="button" aria-hidden="true" id="addBtn" class="btn btn-primary btn-block">提交报名</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h1 style="text-align: center; margin-top: 40px; margin-bottom: 20px;">已经报名的活动</h1>
+
+  <div class="container">
+    <table class="table table-striped" id="myTable" style="text-align: center;">
+      <thead>
+        <tr>
+          <th>活动名称</th><th>姓名</th><th>电话</th><th>邮箱</th>
+        </tr>
+      </thead>
+      <tbody id="insertPlace">
+      </tbody>
+    </table>
+  </div>
+
+
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script>
+    var sum = 1;
+    $("#addBtn").click(function () {
+      let insertPlace = $("#insertPlace");
+      let tr = $("<tr>");
+      tr.append($("<td>").html($("#name2").val()));
+      tr.append($("<td>").html($("#name").val()));
+      tr.append($("<td>").html($("#tel").val()));
+      tr.append($("<td>").html($("#email").val()));
+      insertPlace.append(tr);
+    })  
+  </script>
+</body>
+
+</html>

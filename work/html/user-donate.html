@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>捐赠管理系统</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/underscore.js/1.9.1/underscore-min.js"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/homt.css">
+</head>
+<body>
+<script src="../js/nav-user.js"></script>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">积分余额</div>
+                <div class="panel-body">
+                    <span id="points">0</span>
+                    <button type="button" class="btn btn-success btn-xs" style="margin-left: 15px;" onclick="toRecharge()">去充值</button>
+                    <button type="button" class="btn btn-success btn-xs" style="margin-left: 15px;" data-toggle="modal" data-target="#addProductModal">
+                        添加商品
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="panel panel-default">
+                <div class="panel-heading">捐赠物品列表</div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>描述</th>
+                            <th>积分</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody id="itemList"></tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <ul class="pager">
+                        <li><a href="#" onclick="prevPage()">上一页</a></li>
+                        <li><a href="#" onclick="nextPage()">下一页</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exchangeModal" tabindex="-1" role="dialog" aria-labelledby="exchangeModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exchangeModalLabel">确认兑换</h4>
+            </div>
+            <div class="modal-body">
+                <p>确认将<span id="exchangePoints"></span>积分兑换成<span id="exchangeItem"></span>吗？</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="exchangeItem()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">添加商品</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="productDesc">商品描述</label>
+                            <input type="text" class="form-control" id="productDesc">
+                        </div>
+                        <div class="form-group">
+                            <label for="productStock">库存</label>
+                            <input type="number" class="form-control" id="productStock">
+                        </div>
+                        <div class="form-group">
+                            <label for="productPoints">积分</label>
+                            <input type="number" class="form-control" id="productPoints">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="addProduct()">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 引入jQuery库文件和Bootstrap的JavaScript插件 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    function addProduct() {
+        // 获取各个输入框中的值
+        let descVal = $('#productDesc').val();
+        let stockVal = $('#productStock').val();
+        let pointsVal = $('#productPoints').val();
+        // 构造新的商品card
+        let newProductCard = '<div class="card">' +
+                                '<div class="card-body">' +
+                                    '<h5 class="card-title">' + descVal + '</h5>' +
+                                    '<p class="card-text">库存：' + stockVal + '</p>' +
+                                    '<p class="card-text">积分：' + pointsVal + '</p>' +
+                                '</div>' +
+                            '</div>';
+        // 将新的商品card添加到页面中
+        $('#productList').append(newProductCard);
+        // 关闭模态框
+        $('#addProductModal').modal('hide');
+    }
+</script>
+
+<script type="text/javascript">
+    var pageSize = 10; //每页显示10个物品
+    var currentPage = 1; //当前页数
+    var itemList = []; //所有物品列表
+    var totalPage = 0; //总页数
+    var currentItem; //当前要兑换的物品
+    var currentPoints; //当前要兑换的积分
+
+    $(function() {
+        getPoints(); //获取当前用户的积分余额
+        getItemList(); //获取所有捐赠物品列表
+    });
+
+    //获取当前用户的积分余额
+    function getPoints() {
+        //模拟请求，实际应该从后端获取
+        var points = 100;
+        $('#points').text(points);
+    }
+
+    //获取所有捐赠物品列表
+    function getItemList() {
+        //模拟请求，实际应该从后端获取
+        itemList = [
+            {name: "物品1", description: "物品1的详细描述", points: 10},
+            {name: "物品2", description: "物品2的详细描述", points: 20},
+            {name: "物品3", description: "物品3的详细描述", points: 30},
+            {name: "物品4", description: "物品4的详细描述", points: 40},
+            {name: "物品5", description: "物品5的详细描述", points: 50},
+            {name: "物品6", description: "物品6的详细描述", points: 60},
+            {name: "物品7", description: "物品7的详细描述", points: 70},
+            {name: "物品8", description: "物品8的详细描述", points: 80},
+            {name: "物品9", description: "物品9的详细描述", points: 90},
+            {name: "物品10", description: "物品10的详细描述", points: 100},
+            {name: "物品11", description: "物品11的详细描述", points: 110},
+            {name: "物品12", description: "物品12的详细描述", points: 120},
+            {name: "物品13", description: "物品13的详细描述", points: 130},
+            {name: "物品14", description: "物品14的详细描述", points: 140},
+            {name: "物品15", description: "物品15的详细描述", points: 150},
+            {name: "物品16", description: "物品16的详细描述", points: 160},
+            {name: "物品17", description: "物品17的详细描述", points: 170},
+            {name: "物品18", description: "物品18的详细描述", points: 180},
+            {name: "物品19", description: "物品19的详细描述", points: 190},
+            {name: "物品20", description: "物品20的详细描述", points: 200}
+        ];
+        filterItemList(); //根据条件过滤物品列表
+        showItemList(); //展示物品列表
+    }
+
+    //根据条件过滤物品列表
+    function filterItemList() {
+        var keyword = $.trim($('input[type="text"]').val());
+        if(keyword == "") {
+            itemList = itemList;
+        } else {
+            itemList = _.filter(itemList, function(item){ 
+                return item.name.indexOf(keyword) > -1; 
+            });
+        }
+        totalPage = Math.ceil(itemList.length / pageSize);
+        currentPage = 1; //过滤后默认返回第一页
+    }
+
+    //展示物品列表
+    function showItemList() {
+        var start = (currentPage - 1) * pageSize;
+        var end = start + pageSize;
+        var itemsHtml = "";
+        for(var i = start; i < end && i < itemList.length; i++) {
+            var item = itemList[i];
+            itemsHtml += '<tr><td>' + item.name + '</td><td>' + item.description + '</td><td>' + item.points + '</td><td><button type="button" class="btn btn-success btn-xs" onclick="exchange(\'' + item.name + '\', ' + item.points + ')">兑换</button></td></tr>';
+        }
+        $('#itemList').html(itemsHtml);
+    }
+
+    //上一页
+    function prevPage() {
+        if(currentPage > 1) {
+            currentPage--;
+            showItemList();
+        }
+    }
+
+    //下一页
+    function nextPage() {
+        if(currentPage < totalPage) {
+            currentPage++;
+            showItemList();
+        }
+    }
+
+    //点击兑换按钮
+    function exchange(name, points) {
+        currentItem = name;
+        currentPoints = points;
+        $('#exchangeModal').modal('show');
+        $('#exchangeItem').text(name);
+        $('#exchangePoints').text(points);
+    }
+
+    //确定兑换
+    function exchangeItem() {
+        //模拟请求，实际应该从后端获取
+        var points = parseInt($('#points').text());
+        if(points >= currentPoints) {
+            points -= currentPoints;
+            $('#points').text(points);
+            alert("兑换成功！");
+            $('#exchangeModal').modal('hide');
+        } else {
+            alert("积分余额不足！");
+        }
+    }
+</script>
+</body>
+</html>

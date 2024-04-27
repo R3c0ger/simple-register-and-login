@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>志愿活动</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- 引入Bootstrap样式 -->
+	<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/homt.css">
+	<script src="../js/home.js"></script>
+	<style>
+		body {
+			background: #f5f5f5;
+		}
+		.container {
+			padding: 20px;
+			margin-top: 50px;
+			background: #fff;
+			border-radius: 5px;
+			box-shadow: 0 0 10px #ccc;
+		}
+		h1 {
+			font-size: 36px;
+			text-align: center;
+			margin: 0;
+			margin-bottom: 30px;
+		}
+		.card {
+			margin-bottom: 20px;
+		}
+		.card .card-body {
+			padding: 20px;
+		}
+		.form-group {
+			margin-bottom: 20px;
+		}
+        .modal-content{
+            width: 100%;
+            padding: 0 5%;
+            padding-top: 20px;
+        }
+	</style>
+</head>
+
+<body>
+	<script src="../js//nav.js"></script>
+	<div class="container">
+		<h1>已发布的志愿活动</h1>
+		<div id="activities"></div>
+		<button id="newActivityBtn" class="btn btn-primary">新增志愿活动</button>
+	</div>
+
+	<!-- 引入jQuery库和Bootstrap的JavaScript组件 -->
+	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script>
+		// 志愿活动数据
+		var activitiesData = [
+			{
+				title: "文化节志愿者招募",
+				content: "文化节志愿者招募，详情请咨询文化部。",
+				time: "2023年5月6日",
+				place: "文化中心"
+			},
+			{
+				title: "助残日志愿者招募",
+				content: "助残日志愿者招募，详情请咨询社会工作志愿者协会。",
+				time: "2023年5月7日",
+				place: "盲人学校"
+			}
+		];
+
+		// 动态生成志愿活动卡片
+		function generateActivityCard(activity) {
+			var card = $("<div>").addClass("card");
+			var cardBody = $("<div>").addClass("card-body");
+
+			$("<h5>").addClass("card-title").text(activity.title).appendTo(cardBody);
+			$("<p>").addClass("card-text").text(activity.content).appendTo(cardBody);
+			$("<p>").addClass("card-text").text("时间：" + activity.time).appendTo(cardBody);
+			$("<p>").addClass("card-text").text("地点：" + activity.place).appendTo(cardBody);
+			cardBody.appendTo(card);
+
+			return card;
+		}
+
+		// 根据数据渲染志愿活动页面
+		function renderActivityPage() {
+			var activitiesDiv = $("#activities");
+
+			activitiesDiv.empty(); // 清空已有数据
+
+			// 遍历数据，动态生成志愿活动卡片
+			for(var i=0; i<activitiesData.length; i++) {
+				var activity = activitiesData[i];
+				var card = generateActivityCard(activity);
+				card.appendTo(activitiesDiv);
+			}
+		}
+
+		// 新增志愿活动模态框内容
+		var newActivityModalContent = `
+			<div class="form-group">
+				<label for="titleInput">标题</label>
+				<input type="text" class="form-control" id="titleInput">
+			</div>
+			<div class="form-group">
+				<label for="contentTextarea">内容</label>
+				<textarea class="form-control" id="contentTextarea" rows="3"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="timeInput">时间</label>
+				<input type="text" class="form-control" id="timeInput">
+			</div>
+			<div class="form-group">
+				<label for="placeInput">地点</label>
+				<input type="text" class="form-control" id="placeInput">
+			</div>
+		`;
+
+		// 新增志愿活动模态框
+		var newActivityModal = $("<div>").addClass("modal fade").attr("id", "newActivityModal");
+		var newActivityModalDialog = $("<div>").addClass("modal-dialog");
+		var newActivityModalContent = $("<div>").addClass("modal-content").html(newActivityModalContent);
+		var newActivityModalFooter = $("<div>").addClass("modal-footer");
+		$("<button>").addClass("btn btn-secondary").attr("data-dismiss", "modal").text("关闭").appendTo(newActivityModalFooter);
+		$("<button>").addClass("btn btn-primary").text("确定").appendTo(newActivityModalFooter);
+		newActivityModalContent.append(newActivityModalFooter);
+		newActivityModalDialog.append(newActivityModalContent);
+		newActivityModal.append(newActivityModalDialog);
+
+		// 绑定按钮事件，弹出新增志愿活动模态框
+		$("#newActivityBtn").click(function() {
+			newActivityModal.modal("show");
+		});
+
+		// 绑定模态框按钮事件，添加新的志愿活动数据
+		newActivityModal.find(".btn-primary").click(function() {
+			var titleInput = $("#titleInput");
+			var contentTextarea = $("#contentTextarea");
+			var timeInput = $("#timeInput");
+			var placeInput = $("#placeInput");
+
+			if(titleInput.val() == "" || contentTextarea.val() == "" || timeInput.val() == "" || placeInput.val() == "") {
+				alert("请填写完整的志愿活动信息！");
+				return;
+			}
+
+			var newActivity = {
+				title: titleInput.val(),
+				content: contentTextarea.val(),
+				time: timeInput.val(),
+				place: placeInput.val()
+			};
+
+			activitiesData.push(newActivity);
+			renderActivityPage();
+			newActivityModal.modal("hide");
+		});
+
+		// 初始化页面
+		renderActivityPage();
+	</script>
+</body>
+
+</html>

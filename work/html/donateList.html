@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>捐赠名单管理</title>
+    <!-- 引入Bootstrap CSS样式表 -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/homt.css">
+</head>
+<body>
+    <script src="../js/nav.js"></script>
+    <div class="container">
+        <h1 style="text-align: center; margin-top: 30px;">捐赠名单管理</h1>
+        <!-- 增加数据表单 -->
+        <form id="addForm">
+            <div class="form-group">
+                <label for="name">姓名</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="amount">捐赠金额</label>
+                <input type="number" class="form-control" id="amount" name="amount" required>
+            </div>
+            <button type="submit" class="btn btn-primary">添加</button>
+        </form>
+        <hr>
+        <!-- 捐赠名单表格 -->
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">序号</th>
+                    <th scope="col">姓名</th>
+                    <th scope="col">捐赠金额</th>
+                    <th scope="col">操作</th>
+                </tr>
+            </thead>
+            <tbody id="list">
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- 引入jQuery和Bootstrap JS脚本 -->
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // 定义捐赠名单数据
+            var data = [
+                {name: "张三", amount: 100},
+                {name: "李四", amount: 200},
+                {name: "王五", amount: 300}
+            ];
+            
+            // 初始化捐赠名单表格
+            renderList(data);
+            
+            // 提交添加数据表单时，添加数据到数组并重新渲染表格
+            $("#addForm").submit(function(event) {
+                event.preventDefault();
+                var name = $("#name").val();
+                var amount = parseFloat($("#amount").val());
+                if (!isNaN(amount)) {
+                    data.push({name: name, amount: amount});
+                    renderList(data);
+                    $("#addForm")[0].reset();
+                }
+            });
+            
+            // 点击删除按钮时，从数组中删除对应的记录并重新渲染表格
+            $(document).on("click", ".btn-delete", function(event) {
+                var index = parseInt($(this).attr("data-index"));
+                if (!isNaN(index) && index >= 0 && index < data.length) {
+                    data.splice(index, 1);
+                    renderList(data);
+                }
+            });
+            
+            // 点击修改按钮时，弹出修改表单并填充数据
+            $(document).on("click", ".btn-edit", function(event) {
+                var index = parseInt($(this).attr("data-index"));
+                if (!isNaN(index) && index >= 0 && index < data.length) {
+                    $("#editName").val(data[index].name);
+                    $("#editAmount").val(data[index].amount);
+                    $("#editForm").attr("data-index", index);
+                    $("#editModal").modal();
+                }
+            });
+            
+            // 提交修改表单时，更新数组中对应的记录并重新渲染表格
+            $("#editForm").submit(function(event) {
+                event.preventDefault();
+                var index = parseInt($("#editForm").attr("data-index"));
+                var name = $("#editName").val();
+                var amount = parseFloat($("#editAmount").val());
+                if (!isNaN(amount) && !isNaN(index) && index >= 0 && index < data.length) {
+                    data[index].name = name;
+                    data[index].amount = amount;
+                    renderList(data);
+                    $("#editModal").modal("hide");
+                }
+            });
+            
+            // 点击查找按钮时，过滤数组并重新渲染表格
+            $("#searchName").keyup(function(event) {
+                var keyword = $(this).val();
+                var filteredData = data.filter(function(obj) {
+                    return obj.name.indexOf(keyword) !== -1;
+                });
+                renderList(filteredData);
+            });
+        });
+        
+        // 渲染捐赠名单表格
+        function renderList(data) {
+            var html = "";
+            for (var i = 0; i < data.length; i++) {
+                html += "<tr>";
+                html += "<td>" + (i+1) + "</td>";
+                html += "<td>" + data[i].name + "</td>";
+                html += "<td>" + data[i].amount.toFixed(2) + "</td>";
+                html += "<td>";
+                html += "<button type='button' class='btn btn-primary btn-edit' data-index='" + i + "'>修改</button> ";
+                html += "<button type='button' class='btn btn-danger btn-delete' data-index='" + i + "'>删除</button>";
+                html += "</td>";
+                html += "</tr>";
+            }
+            $("#list").html(html);
+        }
+    </script>
+    
+    <!-- 修改数据的模态框 -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel">修改</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="editForm">
+            <div class="modal-body">
+                <input type="hidden" id="editIndex" name="index">
+                <div class="form-group">
+                    <label for="editName">姓名</label>
+                    <input type="text" class="form-control" id="editName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAmount">捐赠金额</label>
+                    <input type="number" class="form-control" id="editAmount" name="amount" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">保存</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</body>
+</html>

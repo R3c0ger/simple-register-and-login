@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>商品管理页面</title>
+  <!-- 引入bootstrap -->
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <!-- 引入jquery -->
+  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="../css/homt.css">
+</head>
+<body>
+  <script src="../js/nav.js"></script>
+  <div class="container">
+    <h1 class="text-center" style="margin-top: 30px;margin-bottom: 20px;">商品管理页面</h1>
+    <div class="row">
+      <div class="col-md-3">
+        <label for="name">商品名称:</label>
+        <input type="text" id="name" class="form-control">
+      </div>
+      <div class="col-md-3">
+        <label for="score">所需计分:</label>
+        <input type="number" min="0" id="score" class="form-control">
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-primary" id="add-btn" style="margin-top: 24px;">发布商品</button>
+      </div>
+    </div>
+    <table class="table table-hover" style="margin-top: 30px;">
+      <thead>
+        <tr>
+          <th>商品名称</th>
+          <th>所需计分</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr>
+          <td>商品1</td>
+          <td>10</td>
+          <td>
+            <button class="btn btn-info btn-xs edit-btn">修改</button>
+            <button class="btn btn-danger btn-xs del-btn">删除</button>
+          </td>
+        </tr>
+        <tr>
+          <td>商品2</td>
+          <td>20</td>
+          <td>
+            <button class="btn btn-info btn-xs edit-btn">修改</button>
+            <button class="btn btn-danger btn-xs del-btn">删除</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    // 添加商品
+    $('#add-btn').on('click', function() {
+      var name = $('#name').val();
+      var score = $('#score').val();
+
+      // 检查输入是否为空
+      if (!name || !score) {
+        alert('请填写完整信息！');
+        return;
+      }
+
+      // 创建新的tr并添加到表格中
+      var $tr = $('<tr><td>' + name + '</td><td>' + score + '</td><td><button class="btn btn-info btn-xs edit-btn">修改</button><button class="btn btn-danger btn-xs del-btn">删除</button></td></tr>');
+      $('#tbody').append($tr);
+
+      // 清空表单
+      $('#name').val('');
+      $('#score').val('');
+    });
+
+    // 删除商品
+    $('#tbody').on('click', '.del-btn', function() {
+      $(this).parents('tr').remove();
+    });
+
+    // 修改商品
+    $('#tbody').on('click', '.edit-btn', function() {
+      var $tr = $(this).parents('tr');
+      var name = $tr.find('td:nth-child(1)').text();
+      var score = $tr.find('td:nth-child(2)').text();
+
+      // 显示模态框
+      $('#edit-modal').modal('show');
+
+      // 给模态框赋初值
+      $('#edit-name').val(name);
+      $('#edit-score').val(score);
+
+      // 点击保存按钮后修改表格中的数据
+      $('#save-btn').on('click', function() {
+        var newName = $('#edit-name').val();
+        var newScore = $('#edit-score').val();
+
+        // 检查输入是否为空
+        if (!newName || !newScore) {
+          alert('请填写完整信息！');
+          return;
+        }
+
+        $tr.find('td:nth-child(1)').text(newName);
+        $tr.find('td:nth-child(2)').text(newScore);
+
+        $('#edit-modal').modal('hide');
+      });
+    });
+  </script>
+</body>
+</html>
