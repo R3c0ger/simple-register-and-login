@@ -5,6 +5,8 @@ node_modules
 *.docx
 *.mp[34]
 package-lock.json
+venv
+*.py[co]
 
 pet-shop-box
 TASK.txt
