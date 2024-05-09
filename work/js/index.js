@@ -3,19 +3,19 @@ if (typeof(Storage) === 'undefined') {
   alert('对不起，您的浏览器不支持 Web Storage...')
 }
 
-// 获取用户类型
-function getUserType() {
+// 获取用户身份
+function getUserStatus() {
   const switchBtn = document.getElementById('switchBtn');
-  const userType = switchBtn.checked ? 'user' : 'merchant';
-  return userType;
+  const userStatus = switchBtn.checked ? 'user' : 'merchant';
+  return userStatus;
 }
 
 // 用户类
 class User {
-  constructor(username, password, userType, phone='', email='', place='') {
+  constructor(username, password, userStatus, phone='', email='', place='') {
     this.username = username;
     this.password = btoa(password);
-    this.userType = userType;
+    this.userStatus = userStatus;
     this.phone = phone;
     this.email = email;
     this.place = place;
@@ -32,15 +32,15 @@ if (loginForm) {
     e.preventDefault();
     var username = document.getElementById('login-username').value;
     var password = document.getElementById('login-password').value;
-    var userType = getUserType();
+    var userStatus = getUserStatus();
 
     const loginError = document.getElementById('login-error');
     // 检查用户名和密码是否匹配
     var user = localStorage.getItem(username);
     if (user && atob(JSON.parse(user).password) === password) {
-      // 检查用户类型是否匹配 
-      if (JSON.parse(user).userType === userType) {
-        const dest = userType === 'merchant' ? 'html/home.html' : 'html/home2.html';
+      // 检查用户身份是否匹配 
+      if (JSON.parse(user).userStatus === userStatus) {
+        const dest = userStatus === 'merchant' ? 'html/home.html' : 'html/home2.html';
         // 提示登录成功，并自动跳转
         loginError.textContent = "";
         var div = document.createElement('div');
@@ -56,7 +56,7 @@ if (loginForm) {
         }, 3000);
       }
       else {
-        loginError.textContent = "用户类型错误！";
+        loginError.textContent = "用户身份错误！";
       }
     } else {
       loginError.textContent = "用户名或密码错误！";
@@ -73,7 +73,7 @@ if (registerForm) {
     var phone = document.getElementById('register-phone').value;
     var email = document.getElementById('register-email').value;
     var place = document.getElementById('register-place').value;
-    var userType = getUserType();
+    var userStatus = getUserStatus();
 
     const registerError = document.getElementById('register-error');
     // 检查用户名和密码是否为空
@@ -89,7 +89,7 @@ if (registerForm) {
 
     // 保存用户信息
     var user = JSON.stringify(
-      new User(username, password, userType, phone, email, place)
+      new User(username, password, userStatus, phone, email, place)
     );
     localStorage.setItem(username, user);
 
