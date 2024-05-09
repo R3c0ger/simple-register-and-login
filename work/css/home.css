@@ -159,3 +159,16 @@ a:hover ,h1:hover{
         background-position: 0%;
     }
 }
+
+/* 登录/注册成功的提示 */
+.alert-success {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    padding: 10px 0;
+}

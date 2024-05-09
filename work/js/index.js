@@ -3,34 +3,69 @@ if (typeof(Storage) === 'undefined') {
   alert('对不起，您的浏览器不支持 Web Storage...')
 }
 
-// 区分登录界面和注册界面
+// 获取用户类型
+function getUserType() {
+  const switchBtn = document.getElementById('switchBtn');
+  const userType = switchBtn.checked ? 'user' : 'merchant';
+  return userType;
+}
+
+// 用户类
+class User {
+  constructor(username, password, userType, phone='', email='', place='') {
+    this.username = username;
+    this.password = btoa(password);
+    this.userType = userType;
+    this.phone = phone;
+    this.email = email;
+    this.place = place;
+  }
+}
+
+// 检测是登录界面还是注册界面
 const loginForm = document.getElementById('login-form');
 const registerForm = document.getElementById('register-form');
 
+// 处理登录表单的提交
 if (loginForm) {
-  // 处理登录表单的提交
   loginForm.addEventListener('submit', function(e) {
     e.preventDefault();
     var username = document.getElementById('login-username').value;
     var password = document.getElementById('login-password').value;
-    // 获取用户类型
-    const switchBtn = document.getElementById('switchBtn');
-    const userType = switchBtn.checked ? '用户' : '商家';
+    var userType = getUserType();
 
+    const loginError = document.getElementById('login-error');
+    // 检查用户名和密码是否匹配
     var user = localStorage.getItem(username);
-    if (user && JSON.parse(user).password === password) {
-      alert(userType + '登录成功！');
-      if (userType === '商家') {
-        window.location.href = "html/home.html";
-      } else {
-        window.location.href = "html/home2.html";
+    if (user && atob(JSON.parse(user).password) === password) {
+      // 检查用户类型是否匹配 
+      if (JSON.parse(user).userType === userType) {
+        const dest = userType === 'merchant' ? 'html/home.html' : 'html/home2.html';
+        // 提示登录成功，并自动跳转
+        loginError.textContent = "";
+        var div = document.createElement('div');
+        div.textContent = '登录成功！ 3秒后跳转至导航...';
+        div.className = 'alert-success';
+        div.appendChild(document.createElement('a'));
+        div.children[0].textContent = '点此直接跳转';
+        div.children[0].setAttribute('href', dest);
+        div.children[0].style.marginLeft = '15px';
+        document.body.appendChild(div);
+        setTimeout(function() {
+          window.location.href = dest;
+        }, 3000);
+      }
+      else {
+        loginError.textContent = "用户类型错误！";
       }
     } else {
-      alert('用户名或密码错误！');
+      loginError.textContent = "用户名或密码错误！";
     }
   });
-} else if (registerForm) {
-  // 处理注册表单的提交
+}
+
+// 处理注册表单的提交
+if (registerForm) {
   registerForm.addEventListener('submit', function(e) {
     e.preventDefault();
     var username = document.getElementById('register-username').value;
@@ -38,28 +73,34 @@ if (loginForm) {
     var phone = document.getElementById('register-phone').value;
     var email = document.getElementById('register-email').value;
     var place = document.getElementById('register-place').value;
+    var userType = getUserType();
 
-    // 获取用户类型
-    const switchBtn = document.getElementById('switchBtn');
-    const userType = switchBtn.checked ? '用户' : '商家';
-
-    // 检查用户名和密码是否为空、用户名是否已存在
+    const registerError = document.getElementById('register-error');
+    // 检查用户名和密码是否为空
     if (username === "" || password === "") {
-      alert("请输入用户名和密码！");
-    } else if (localStorage.getItem(username)) {
-      alert('用户名已存在！');
-    } else {
-      // 保存用户信息
-      var user = JSON.stringify({
-        username: username,
-        password: password,
-        userType: userType,
-        phone: phone,
-        email: email,
-        place: place
-      });
-      localStorage.setItem(username, user);
-      alert('注册成功！');
+      registerError.textContent = "请输入用户名和密码！";
+      return
     }
+    // 检查用户名是否已存在
+    if (localStorage.getItem(username)) {
+      registerError.textContent = "用户名已存在！";
+      return
+    }
+
+    // 保存用户信息
+    var user = JSON.stringify(
+      new User(username, password, userType, phone, email, place)
+    );
+    localStorage.setItem(username, user);
+
+    // 提示注册成功
+    registerError.textContent = "";
+    var div = document.createElement('div');
+    div.textContent = '注册成功！';
+    div.className = 'alert-success';
+    document.body.appendChild(div);
+    setTimeout(function() {
+      document.body.removeChild(div);
+    }, 5000);
   });
 }
