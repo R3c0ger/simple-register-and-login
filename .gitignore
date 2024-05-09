@@ -5,3 +5,6 @@ node_modules
 *.docx
 *.mp[34]
 package-lock.json
+
+pet-shop-box
+TASK.txt

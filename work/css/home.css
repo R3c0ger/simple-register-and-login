@@ -144,7 +144,7 @@ a:hover ,h1:hover{
             rgb(160, 131, 237),
             rgb(239, 122, 200),
             rgb(254, 134, 159),
-            rgb(255, 167, 69));1
+            rgb(255, 167, 69));
     background-size: 200%;
     animation: streamer 3s linear infinite;
 }
