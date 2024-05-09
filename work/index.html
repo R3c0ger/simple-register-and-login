@@ -163,7 +163,7 @@
         <label for="login-password">Password:</label>
         <input type="password" id="login-password" name="login-password">
       </div>
-      <button type="button" class="btn" id="logoinBtn">Login</button>
+      <button type="submit" class="btn" id="logoinBtn">Login</button>
       <div id="login-error" class="error"></div>
     </form>
   </div>
@@ -181,11 +181,14 @@
     </div>
     <button id="outputBtn" class="xinBtn">注册</button>
   </div>
+
   <script>
-    const outputBtn = document.getElementById("outputBtn");
-    outputBtn.addEventListener("click", function () {
-      window.location.href = "registar.html"
-    });
+    window.onload = function() {
+      const outputBtn = document.getElementById("outputBtn");
+      outputBtn.addEventListener("click", function() {
+        window.location.href = "registar.html"
+      });
+    };
   </script>
 
   <script>
@@ -195,10 +198,13 @@
         const state = switchBtn.checked ? "html/home2.html":"html/home.html";
         window.location.href = state;
       } else {
-        alert("账号或者密码错误！");
+        // alert("账号或者密码错误！");
       }
     })
   </script>
+  
+  <script src="js/index.js"></script>
+
 </body>
 
 </html>
